@@ -1,0 +1,51 @@
+logging:
+  level:
+    web: DEBUG
+
+scheduling:
+  this:
+    instance:
+      active: 1 # required on one instance to be 1, while on others 0, so that only one instance handles the birthday scheduling job
+  before:
+    birthdate:
+      cron: "0 0 9 * * *"   # 9 o'clock everyday
+      days: 7
+      discount: "20%"
+      message: "Dear {firstname},\\n
+                for your upcoming birthday, we would like to offer you a special discount!\\n
+                You have {discount} off on our services for this month which will be reduced from your bill.\\n
+                \\n
+                All the best for an upcoming happy birthday!\\n
+                \\n
+                The example Team\\n\\n"
+      placeholder:
+        discount: "{discount}"
+        firstname: "{firstname}"
+      subject: "{firstname}, this is your birthday special discount!"
+  at:
+    birthdate:
+      cron: "0 0 10 * * *"   # 10 o'clock everyday
+      export:
+        filename: customersAndSimsExports.json
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:sims_db
+    username: sims
+    password: pass1234
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: user@gmail.com
+    password: password # in production this should be encrypted
+  profiles:
+    active: dev # for development only! so that no test data is created and prevent scheduled tasks from running immediately.
